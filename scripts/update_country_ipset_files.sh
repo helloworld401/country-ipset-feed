@@ -112,8 +112,10 @@ PY
 
 {
   echo "updated_at_utc=$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
-  echo "countries=$COUNTRIES"
   echo "source_mmdb=$GEOIP_MMDB_URL"
+  echo "all_countries=$ALL_COUNTRIES"
+  if [[ "$ALL_COUNTRIES" != "1" ]]; then
+    echo "countries=$COUNTRIES"
+  fi
 } > "${OUT_DIR}/metadata.txt"
-
 echo "done"
