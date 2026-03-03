@@ -1,0 +1,52 @@
+name: Update Country IPSet Files
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 1 * * *" # ежедневно 01:23 UTC
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      ALL_COUNTRIES: "1"
+      OUT_DIR: country_ipsets
+      MMDB_PATH: /tmp/country-ipset-feed/GeoLite2-Country.mmdb
+      GEOIP_MMDB_URL: https://git.io/GeoLite2-Country.mmdb
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Python deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3 python3-pip
+          python3 -m pip install --upgrade pip
+          python3 -m pip install maxminddb
+
+      - name: Ensure updater script exists
+        run: |
+          test -f scripts/update_country_ipset_files.sh
+
+      - name: Run updater
+        run: |
+          chmod +x scripts/update_country_ipset_files.sh
+          scripts/update_country_ipset_files.sh
+
+      - name: Commit and push if changed
+        run: |
+          if git diff --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+
+          git config user.name "country-ipset-bot"
+          git config user.email "country-ipset-bot@users.noreply.github.com"
+
+          git add country_ipsets
+          git commit -m "chore: update country ipset files"
+          git push
