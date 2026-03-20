@@ -1,3 +1,3 @@
-updated_at_utc=2026-03-19T03:57:13Z
+updated_at_utc=2026-03-20T03:39:54Z
 source_mmdb=https://git.io/GeoLite2-Country.mmdb
 all_countries=1
